@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Teko:wght@300&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="relative">
+    <div
+      style="background-color: #002945; height: 100vh; width: 100%; z-index: 2"
+      class="main flex items-center flex-col absolute"
+    >
+      <h1
+        style="
+          color: #e0e1dd;
+          font-family: 'Anton', sans-serif;
+          font-size: 150px;
+        "
+        class="text-center"
+      >
+        BATTLESHIP
+      </h1>
+      <div class="details flex flex-col h-28 justify-start">
+        <label for="name" class="text-slate-100">Player Name</label>
+        <input
+          style="font-family: 'Anton', sans-serif"
+          type="text"
+          class="name h-10 w-24 bg-white text-center text-opacity-60"
+          value="Thunderforge"
+        />
+      </div>
+      <button
+        style="font-family: 'Anton', sans-serif"
+        class="h-16 w-36 border-2 text-2xl bg-slate-300 hover:bg-white"
+      >
+        Start Game
+      </button>
+    </div>
+    <div
+      style="z-index: 4; width: 70%; margin-left: 15%"
+      class="strategy absolute border-4 border-black bg-gray-700 mt-2 flex flex-wrap"
+    >
+      <h1
+        style="font-family: 'Black Ops One', system-ui"
+        class="text-5xl text-center mt-0.5 w-full"
+      >
+        Strategy Pannel
+      </h1>
+      <div
+        style="height: 480px"
+        class="emp1 w-1/12 border h-96 border-black"
+      ></div>
+      <div style="height: 480px" class="ships w-2/12 border h-96 border-black">
+        <h3
+          style="
+            height: 10%;
+            color: #adb5bd;
+            font-size: x-large;
+            font-family: 'Black Ops One', system-ui;
+            text-align: center;
+          "
+        >
+          Ships
+        </h3>
+        <div class="ships Patrolship">
+          <img
+            class="img w-full"
+            src="Ships/full/Patrolship.png"
+            alt=""
+            class=""
+          />Patrolship
+        </div>
+        <div class="Submarine ships">
+          <img class="img" src="Ships/full/Submarine.png" alt="" />Submarine
+        </div>
+        <div class="Destroyer ships">
+          <img class="img" src="Ships/full/Destroyer.png" alt="" />Destoyer
+        </div>
+        <div class="Battleship ships">
+          <img class="img" src="Ships/full/Battleship.png" alt="" />Battleship
+        </div>
+        <div class="Carrier ships">
+          <img
+            class="img object-contain"
+            src="Ships/full/Carrier.png"
+            alt=""
+          />Carrier
+        </div>
+      </div>
+      <div
+        style="font-family: 'Abril Fatface', serif"
+        class="map w-6/12 border border-black"
+      >
+        <div
+          style="height: 16%"
+          class="info flex flex-col border border-black items-center justify-between"
+        >
+          <p style="color: #e5e7eb; font-size: medium; text-align: center">
+            <span class="pname">Thunderforge</span>, Place your
+            <span class="sname">Ships</span>
+          </p>
+          <button class="axis bg-slate-200 h-8 w-16 rounded-sm">
+            Axis: <span class="dir">X</span>
+          </button>
+        </div>
+        <div
+          style="height: 80%; width: 96%; margin-top: 5%; margin-left: 2%"
+          class="grids border-4 border-black flex flex-wrap"
+        ></div>
+      </div>
+      <div class="opt w-2/12 border border-black">options</div>
+      <div
+        style="height: 480px"
+        class="emp2 w-1/12 border h-96 border-black"
+      ></div>
+    </div>
+
+    <footer
+      class="w-full text-white h-12 text-center bg-slate-900 fixed bottom-0 text-lg flex items-center justify-center"
+    >
+      <p
+        style="color: #adb5bd; font-family: 'Teko', sans-serif; font-size: 20px"
+        class=""
+      >
+        Created by
+        <a
+          style="text-decoration: underline"
+          href="https://github.com/Reddi-Umamahesh/ReddiUmamahesh.github.io"
+        >
+          Reddi-Umamahesh<i class="fa-brands fa-github"></i
+        ></a>
+        as part of
+        <a
+          style="text-decoration: underline"
+          href="https://www.theodinproject.com"
+          >The Odin Project</a
+        >
+        Javascript curriculum
+      </p>
+    </footer>
+    <script src="app.js"></script>
+  </body>
+</html>
