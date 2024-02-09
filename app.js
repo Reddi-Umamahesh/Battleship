@@ -48,7 +48,20 @@ const shipdivs = document.querySelectorAll(".ships");
 let axis = document.querySelector(".axis");
 let dir = document.querySelector(".dir");
 let grids = document.querySelector(".grids");
+const del = document.querySelector(".delete");
 
+document.querySelector(".start").addEventListener("click", () => {
+  document.querySelector(".strategy-panel").classList.add("open");
+});
+
+del.addEventListener("click", () => {
+  console.log("deleted");
+  grids.innerHTML = "";
+  Placedships = "";
+  updatePlaced();
+  selectedship = "";
+  generateGrid(10, 10);
+});
 generateGrid(10, 10);
 grids.addEventListener("mouseleave", handlemouseleave);
 for (const i of shipdivs) {
@@ -58,11 +71,16 @@ axis.addEventListener("click", () => {
   dir.innerText = dir.innerText == "X" ? "Y" : "X";
 });
 function shipSelector(i) {
+  let instruts = document.querySelector(".insrtuctions");
+  instruts.innerText = "";
   let temp = selectedship;
+  console.log(Placedships);
   if (temp != null) {
     let t = temp.name;
     let prev = document.querySelector("." + t);
-    prev.style.backgroundColor = "#374151";
+    if (!Placedships.includes(prev)) {
+      prev.style.backgroundColor = "#374151";
+    }
   }
   if (i.classList.contains("Patrolship")) {
     selectedship = ships[0];
@@ -78,6 +96,7 @@ function shipSelector(i) {
   let c = selectedship.name;
   ship_dispname.innerText = c;
   let curr = document.querySelector("." + c);
+  updatePlaced();
   curr.style.backgroundColor = "#4287f5";
 }
 
@@ -145,7 +164,12 @@ function handlemouseleave() {
 }
 function handlegridclick(event) {
   let { row, col } = event.target.dataset;
+  checkplay();
   console.log("clicked");
+  console.log(Placedships);
+  if (Placedships.includes(selectedship)) {
+    return;
+  }
   row = parseInt(row);
   col = parseInt(col);
   const isval = isvalid(row, col);
@@ -164,13 +188,8 @@ function insertimg(row, col) {
   } else {
     endY = col + selectedship.len - 1;
   }
-  selectedship.coords = [
-    [row, col],
-    [endX, endY],
-  ];
-  selectedship.is_placed = 1;
-  selectedship.Ship_axis = dir.innerText;
-  Placedships.push(selectedship);
+  updatedetails(row, col, endX, endY);
+
   console.log(row, col, endX, endY);
   if (dir.innerText == "X") {
     let j = 1;
@@ -178,7 +197,7 @@ function insertimg(row, col) {
       const img = document.createElement("img");
       const link = `Ships/${selectedship.name}/${selectedship.name}${j}.png`;
       j++;
-      console.log(row, col, endX, endY, link);
+
       img.src = link;
       img.classList.add("img-container");
 
@@ -194,7 +213,6 @@ function insertimg(row, col) {
       const img = document.createElement("img");
       const link = `Ships/${selectedship.name}-vert/${selectedship.name}${j}.png`;
       j++;
-      console.log(row, col, endX, endY, link);
       img.src = link;
       img.style.height = "100%";
       img.style.width = "100%";
@@ -206,10 +224,45 @@ function insertimg(row, col) {
     }
   }
 }
-
+function updatedetails(row, col, endX, endY) {
+  selectedship.coords = [
+    [row, col],
+    [endX, endY],
+  ];
+  selectedship.is_placed = 1;
+  selectedship.Ship_axis = dir.innerText;
+  Placedships.push(selectedship);
+  const cls = selectedship.name;
+  const getshipdiv = document.querySelector("." + cls);
+  getshipdiv.style.backgroundColor = "#718096";
+  console.log(getshipdiv);
+}
+function updatePlaced() {
+  for (const i of ships) {
+    if (Placedships.includes(i)) {
+      let shipdiv = document.querySelector("." + i.name);
+      shipdiv.style.backgroundColor = "#718096";
+      shipdiv.style.cursor = "not-allowed";
+    } else {
+      let shipdiv = document.querySelector("." + i.name);
+      shipdiv.style.backgroundColor = "";
+    }
+  }
+}
+function checkplay() {
+  if (Placedships.length == 4) {
+    const highlightBtn = document.querySelector(".highlight-btn");
+    const i = document.querySelector(".playimg");
+    i.style.cursor = "pointer";
+    highlightBtn.classList.toggle("blink");
+  }
+}
 function isvalid(row, col) {
   let endX = row,
     endY = col;
+  if (Placedships.includes(selectedship)) {
+    return false;
+  }
   if (dir.innerText == "Y") {
     endX = row + selectedship.len - 1;
   } else {
@@ -217,6 +270,23 @@ function isvalid(row, col) {
   }
   if (endX > 9 || endY > 9) {
     return false;
+  }
+  if (endX == row) {
+    for (let i = col; i <= endY; i++) {
+      const ele = `[data-row="${row}"][data-col="${i}"]`;
+      const div = document.querySelector(ele);
+      if (div.classList.contains("img-container")) {
+        return false;
+      }
+    }
+  } else {
+    for (let i = row; i <= endX; i++) {
+      const ele = `[data-row="${i}"][data-col="${col}"]`;
+      const div = document.querySelector(ele);
+      if (div.classList.contains("img-container")) {
+        return false;
+      }
+    }
   }
   return true;
 }
@@ -228,7 +298,6 @@ function highletgrid(row, col) {
   } else {
     endY = col + selectedship.len - 1;
   }
-  console.log(row, col, endX, endY);
   if (endX == row) {
     for (let i = col; i <= endY; i++) {
       const ele = `[data-row="${row}"][data-col="${i}"]`;

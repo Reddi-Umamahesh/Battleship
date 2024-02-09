@@ -23,119 +23,182 @@
       href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Open+Sans:wght@500&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body class="relative">
+  <body style="width: 100vw" class="m-0 p-0 overflow-hidden">
     <div
-      style="background-color: #002945; height: 100vh; width: 100%; z-index: 2"
-      class="main flex items-center flex-col absolute"
+      style="height: 100vh; width: 80%"
+      class="container relative overflow-y-scroll"
     >
-      <h1
-        style="
-          color: #e0e1dd;
-          font-family: 'Anton', sans-serif;
-          font-size: 150px;
-        "
-        class="text-center"
-      >
-        BATTLESHIP
-      </h1>
-      <div class="details flex flex-col h-28 justify-start">
-        <label for="name" class="text-slate-100">Player Name</label>
-        <input
-          style="font-family: 'Anton', sans-serif"
-          type="text"
-          class="name h-10 w-24 bg-white text-center text-opacity-60"
-          value="Thunderforge"
-        />
-      </div>
-      <button
-        style="font-family: 'Anton', sans-serif"
-        class="h-16 w-36 border-2 text-2xl bg-slate-300 hover:bg-white"
-      >
-        Start Game
-      </button>
-    </div>
-    <div
-      style="z-index: 4; width: 70%; margin-left: 15%"
-      class="strategy absolute border-4 border-black bg-gray-700 mt-2 flex flex-wrap"
-    >
-      <h1
-        style="font-family: 'Black Ops One', system-ui"
-        class="text-5xl text-center mt-0.5 w-full"
-      >
-        Strategy Pannel
-      </h1>
       <div
-        style="height: 480px"
-        class="emp1 w-1/12 border h-96 border-black"
-      ></div>
-      <div style="height: 480px" class="ships w-2/12 border h-96 border-black">
-        <h3
+        style="background-color: #002945; height: 100vh; width: 100vw"
+        class="main flex items-center flex-col"
+      >
+        <h1
           style="
-            height: 10%;
-            color: #adb5bd;
-            font-size: x-large;
-            font-family: 'Black Ops One', system-ui;
-            text-align: center;
+            color: #e0e1dd;
+            font-family: 'Anton', sans-serif;
+            font-size: 150px;
           "
+          class="text-center"
         >
-          Ships
-        </h3>
-        <div class="ships Patrolship">
-          <img
-            class="img w-full"
-            src="Ships/full/Patrolship.png"
-            alt=""
-            class=""
-          />Patrolship
+          BATTLESHIP
+        </h1>
+        <div class="details flex flex-col h-28 justify-start">
+          <label for="name" class="text-slate-80 text-white">Player Name</label>
+          <input
+            style="font-family: 'Anton', sans-serif"
+            type="text"
+            class="name h-10 w-24 bg-white text-center text-opacity-60"
+            value="Thunderforge"
+          />
         </div>
-        <div class="Submarine ships">
-          <img class="img" src="Ships/full/Submarine.png" alt="" />Submarine
-        </div>
-        <div class="Destroyer ships">
-          <img class="img" src="Ships/full/Destroyer.png" alt="" />Destoyer
-        </div>
-        <div class="Battleship ships">
-          <img class="img" src="Ships/full/Battleship.png" alt="" />Battleship
-        </div>
-        <div class="Carrier ships">
-          <img
-            class="img object-contain"
-            src="Ships/full/Carrier.png"
-            alt=""
-          />Carrier
-        </div>
+        <button
+          style="font-family: 'Anton', sans-serif"
+          class="start h-16 w-36 border-2 text-2xl bg-slate-300 hover:bg-white"
+        >
+          Start Game
+        </button>
       </div>
       <div
-        style="font-family: 'Abril Fatface', serif"
-        class="map w-6/12 border border-black"
+        style="height: 90%; width: 70%; left: 15%"
+        class="strategy-panel fixed border-4 border-black bg-gray-700 mt-2 flex flex-wrap overflow-y-scroll"
       >
-        <div
-          style="height: 16%"
-          class="info flex flex-col border border-black items-center justify-between"
+        <h1
+          style="font-family: 'Black Ops One', system-ui; font-size: 5vw"
+          class="text-5xl text-center mt-0.5 w-full"
         >
-          <p style="color: #e5e7eb; font-size: medium; text-align: center">
-            <span class="pname">Thunderforge</span>, Place your
-            <span class="sname">Ships</span>
-          </p>
-          <button class="axis bg-slate-200 h-8 w-16 rounded-sm">
-            Axis: <span class="dir">X</span>
-          </button>
+          Strategy Pannel
+        </h1>
+        <div style="height: 80%" class="emp1 w-1/12 h-96"></div>
+        <div style="height: 90%" class="ships w-2/12 h-96">
+          <h3
+            style="
+              height: 10%;
+              color: #adb5bd;
+              font-size: x-large;
+              font-family: 'Black Ops One', system-ui;
+              text-align: center;
+              font-size: 2.5vw;
+            "
+          >
+            Ships
+          </h3>
+          <div
+            style="font-size: 1.5vw"
+            class="ships Patrolship overflow-hidden"
+          >
+            <img
+              class="img w-full"
+              src="Ships/full/Patrolship.png"
+              alt=""
+              class=""
+            />Patrolship
+          </div>
+          <div style="font-size: 1.5vw" class="Submarine ships overflow-hidden">
+            <img class="img" src="Ships/full/Submarine.png" alt="" />Submarine
+          </div>
+          <div style="font-size: 1.5vw" class="Destroyer ships overflow-hidden">
+            <img class="img" src="Ships/full/Destroyer.png" alt="" />Destoyer
+          </div>
+          <div
+            style="font-size: 1.5vw"
+            class="Battleship ships overflow-hidden"
+          >
+            <img class="img" src="Ships/full/Battleship.png" alt="" />Battleship
+          </div>
+          <div style="font-size: 1.5vw" class="Carrier ships overflow-hidden">
+            <img
+              class="img object-contain"
+              src="Ships/full/Carrier.png"
+              alt=""
+            />Carrier
+          </div>
         </div>
         <div
-          style="height: 80%; width: 96%; margin-top: 5%; margin-left: 2%"
-          class="grids border-4 border-black flex flex-wrap"
-        ></div>
+          style="font-family: 'Abril Fatface', serif; height: 90%"
+          class="map w-6/12 border border-black"
+        >
+          <div
+            style="
+              height: 16%;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: space-between;
+            "
+            class="info flex flex-col items-center justify-between overflow-hidden"
+          >
+            <p
+              style="
+                color: #e5e7eb;
+                font-size: 1.5vw;
+                text-align: center;
+                margin: 0;
+              "
+            >
+              <span class="pname">Thunderforge</span>, Place your
+              <span class="sname">Ships</span>
+            </p>
+            <p
+              style="
+                font-family: 'Abril Fatface', serif;
+                font-family: 'Open Sans', sans-serif;
+                font-size: 1vw;
+                margin: 0;
+              "
+              class="insrtuctions text-red-700 text-xs"
+            >
+              Click on the ship images to select a ship for placement on the
+              grid.
+            </p>
+            <button
+              style="
+                font-family: 'Abril Fatface', serif;
+                font-family: 'Open Sans', sans-serif;
+                width: 30%;
+                height: 30%;
+                font-size: 1vw;
+                text-align: center;
+              "
+              class="axis bg-slate-200 w-16 rounded-sm flex justify-center items-center"
+            >
+              Axis: <span class="dir">X</span>
+            </button>
+          </div>
+
+          <div
+            style="height: 80%; width: 96%; margin-top: 2%; margin-left: 2%"
+            class="grids border-4 border-black flex flex-wrap"
+          ></div>
+        </div>
+        <div
+          class="opt w-2/12 border border-black flex items-center justify-center"
+        >
+          <div
+            style="height: 60%; width: 80%"
+            class="opts flex flex-col justify-between"
+          >
+            <div class="shuffle optbox">
+              <img class="optimg" src="Assests/shuffle.png" alt="" />
+            </div>
+            <div class="delete optbox">
+              <img class="optimg" src="Assests/delete.png" alt="" />
+            </div>
+            <div class="play optbox border-4 rounded-full highlight-btn">
+              <img class="optimg playimg" src="Assests/play.png" alt="" />
+            </div>
+          </div>
+        </div>
+        <div style="height: 80%" class="emp2 w-1/12 h-96"></div>
       </div>
-      <div class="opt w-2/12 border border-black">options</div>
-      <div
-        style="height: 480px"
-        class="emp2 w-1/12 border h-96 border-black"
-      ></div>
     </div>
 
     <footer
-      class="w-full text-white h-12 text-center bg-slate-900 fixed bottom-0 text-lg flex items-center justify-center"
+      class="w-full text-white h-12 text-center bg-slate-900 fixed text-lg flex items-center justify-center"
     >
       <p
         style="color: #adb5bd; font-family: 'Teko', sans-serif; font-size: 20px"
