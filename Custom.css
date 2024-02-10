@@ -1,0 +1,72 @@
+.stamp {
+    color: #ff0000;
+    font-size: 3rem;
+    font-weight: 700;
+    border: 0.25rem solid #ff0000;
+    display: inline-block;
+    padding: 0.25rem 1rem;
+    text-transform: uppercase;
+    border-radius: 1rem;
+    font-family: "Courier";
+    -webkit-mask-image: url("/Battleship/Assests/grunge.png");
+    -webkit-mask-size: 944px 604px;
+    mix-blend-mode: multiply;
+    font-size: 10vw;
+    width: 90%;
+    visibility: hidden;
+      transition: visibility 1s ease-in-out;
+      top: -300%;
+      position: fixed;
+  }
+
+  .left-door {
+    left: 0;
+  }
+  .right-door {
+    right: 0;
+  }
+  .left-door{
+    width: 50%;
+          height: 100%;
+          background-color: #333;
+          border-right: 30px solid #dddddd;
+          transition: left 2s ease-in-out;
+          left: -500%;
+          top: 0;
+          z-index: 4;
+          
+  }
+  .right-door{
+    width: 50%;
+    height: 100%;
+    background-color: #333;
+    border-left: 30px solid #dddddd;
+    transition: right 2s ease-in-out;
+    z-index: 4;
+    right: -500%;
+    top: 0;
+  }
+ 
+.optimg{
+    object-fit: contain;
+    cursor: pointer;
+    width: 80%;
+}
+
+.optbox{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10%;
+}
+.playimg{
+    cursor: not-allowed;
+    width: 60%;
+    height: 90%;
+}
+.play{
+    margin-left: 0;
+}
+.gamestarted{
+    cursor: wait;
+}

@@ -49,6 +49,9 @@ let axis = document.querySelector(".axis");
 let dir = document.querySelector(".dir");
 let grids = document.querySelector(".grids");
 const del = document.querySelector(".delete");
+const leftdoor = document.querySelector(".left-door");
+const rightdoor = document.querySelector(".right-door");
+const stamp = document.querySelector(".stamp");
 
 document.querySelector(".start").addEventListener("click", () => {
   document.querySelector(".strategy-panel").classList.add("open");
@@ -57,10 +60,19 @@ document.querySelector(".start").addEventListener("click", () => {
 del.addEventListener("click", () => {
   console.log("deleted");
   grids.innerHTML = "";
-  Placedships = "";
+  Placedships = [];
+  selectedship = null;
   updatePlaced();
-  selectedship = "";
+  checkplay();
   generateGrid(10, 10);
+  if (document.querySelector(".highlight-btn").classList.contains("blink")) {
+    console.log("blinking");
+    document.querySelector(".highlight-btn").classList.toggle("blink");
+  }
+  var image = document.querySelector(".playimg");
+  image.src = "Assests/play1-nbg.png";
+  image.style.cursor = "not-allowed";
+  gamestarted = 0;
 });
 generateGrid(10, 10);
 grids.addEventListener("mouseleave", handlemouseleave);
@@ -74,7 +86,7 @@ function shipSelector(i) {
   let instruts = document.querySelector(".insrtuctions");
   instruts.innerText = "";
   let temp = selectedship;
-  console.log(Placedships);
+
   if (temp != null) {
     let t = temp.name;
     let prev = document.querySelector("." + t);
@@ -166,7 +178,7 @@ function handlegridclick(event) {
   let { row, col } = event.target.dataset;
   checkplay();
   console.log("clicked");
-  console.log(Placedships);
+  // console.log(Placedships);
   if (Placedships.includes(selectedship)) {
     return;
   }
@@ -188,9 +200,13 @@ function insertimg(row, col) {
   } else {
     endY = col + selectedship.len - 1;
   }
+
+  if (!isvalid(row, col)) {
+    invalidArea(row, col);
+    return;
+  }
   updatedetails(row, col, endX, endY);
 
-  console.log(row, col, endX, endY);
   if (dir.innerText == "X") {
     let j = 1;
     for (let i = col; i <= endY; i++) {
@@ -225,6 +241,9 @@ function insertimg(row, col) {
   }
 }
 function updatedetails(row, col, endX, endY) {
+  if (isNaN(row) || isNaN(col)) {
+    return false;
+  }
   selectedship.coords = [
     [row, col],
     [endX, endY],
@@ -232,10 +251,11 @@ function updatedetails(row, col, endX, endY) {
   selectedship.is_placed = 1;
   selectedship.Ship_axis = dir.innerText;
   Placedships.push(selectedship);
+  checkplay();
   const cls = selectedship.name;
   const getshipdiv = document.querySelector("." + cls);
   getshipdiv.style.backgroundColor = "#718096";
-  console.log(getshipdiv);
+  // console.log(getshipdiv);
 }
 function updatePlaced() {
   for (const i of ships) {
@@ -246,20 +266,24 @@ function updatePlaced() {
     } else {
       let shipdiv = document.querySelector("." + i.name);
       shipdiv.style.backgroundColor = "";
+      shipdiv.style.cursor = "pointer";
     }
   }
 }
 function checkplay() {
-  if (Placedships.length == 4) {
+  if (Placedships.length == 5) {
     const highlightBtn = document.querySelector(".highlight-btn");
     const i = document.querySelector(".playimg");
     i.style.cursor = "pointer";
-    highlightBtn.classList.toggle("blink");
+    highlightBtn.classList.add("blink");
   }
 }
 function isvalid(row, col) {
   let endX = row,
     endY = col;
+  if (isNaN(row) || isNaN(col)) {
+    return false;
+  }
   if (Placedships.includes(selectedship)) {
     return false;
   }
@@ -275,7 +299,7 @@ function isvalid(row, col) {
     for (let i = col; i <= endY; i++) {
       const ele = `[data-row="${row}"][data-col="${i}"]`;
       const div = document.querySelector(ele);
-      if (div.classList.contains("img-container")) {
+      if (div.querySelector("img") !== null) {
         return false;
       }
     }
@@ -283,7 +307,7 @@ function isvalid(row, col) {
     for (let i = row; i <= endX; i++) {
       const ele = `[data-row="${i}"][data-col="${col}"]`;
       const div = document.querySelector(ele);
-      if (div.classList.contains("img-container")) {
+      if (div.querySelector("img") !== null) {
         return false;
       }
     }
@@ -316,9 +340,73 @@ function cleargrid() {
   grids.innerHTML = "";
 }
 function invalidArea(row, col) {
+  if (isNaN(row) || isNaN(col)) {
+    return false;
+  }
   const selector = `[data-row="${row}"][data-col="${col}"]`;
   const divElement = document.querySelector(selector);
   divElement.style.cursor = "not-allowed";
 }
 
-console.log("working");
+document.querySelector(".play").addEventListener("click", (event) => {
+  if (Placedships.length < 4) {
+    console.log("returned");
+    return;
+  }
+  changeimg();
+  if (gamestarted > 1) {
+    return;
+  }
+  gamestarted++;
+  console.log("started");
+  console.log("work");
+  rightdoor.style.right = "0";
+  leftdoor.style.left = "0";
+  leftdoor.style.borderRight = "30px solid #fff";
+  rightdoor.style.borderLeft = "30px solid #fff";
+  doors();
+  printstamp();
+});
+let gamestarted = 0;
+function changeimg() {
+  var image = document.querySelector(".playimg");
+  console.log(image.src);
+  if (gamestarted > 0) {
+    image.style.cursor = "";
+  } else {
+    gamestarted++;
+    console.log("img");
+    image.style.opacity = "0";
+    setTimeout(function () {
+      image.src = "Assests/pause1.png";
+      image.style.opacity = "1";
+      image.style.cursor = "wait";
+    }, 150);
+  }
+}
+
+function doors() {
+  console.log("doors");
+  setTimeout(() => {
+    leftdoor.style.borderRight = "30px solid #333";
+    rightdoor.style.borderLeft = "30px solid #333";
+  }, 2000);
+}
+
+function printstamp() {
+  setTimeout(() => {
+    stamp.style.visibility = "visible";
+    stamp.style.top = "15%";
+    setTimeout(() => {
+      battlebegins();
+    }, 500);
+  }, 2400);
+}
+
+function battlebegins() {
+  stamp.style.visibility = "hidden";
+  setTimeout(() => {
+    rightdoor.style.right = "-500%";
+    leftdoor.style.left = "-500%";
+  }, 1200);
+}
