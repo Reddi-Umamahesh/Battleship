@@ -70,3 +70,31 @@
 .gamestarted{
     cursor: wait;
 }
+.bf{
+  height: 100%;
+  width: 50%;
+  border: 1PX solid black;
+}
+.feild{
+  height: 85%;
+  width: 65%;
+  margin-top: 5%;
+ 
+  display: flex;
+  flex-wrap: wrap;
+}
+.feild-item{
+  height: 9%;
+  width: 9%;
+  margin-bottom: 1%;
+  margin-right: 1%;
+  border: 1px solid white;
+}
+
+.cmd{
+  height: 50%;
+  width: 50%;
+  border: 1.5px solid white;
+  border-radius: 20%;
+  background: linear-gradient(90deg, rgb(55, 55, 55) 0%, rgb(41, 41, 41) 29%, rgb(41, 41, 41) 76%, rgb(56, 56, 56) 100%);
+}

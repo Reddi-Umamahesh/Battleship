@@ -410,3 +410,26 @@ function battlebegins() {
     leftdoor.style.left = "-500%";
   }, 1200);
 }
+
+function generateBattlefeild() {
+  console.log("working");
+  const parent = document.querySelectorAll(".feild");
+  parent.forEach((ele) => {
+    ele.innerHTML = "";
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        const feildItem = document.createElement("div");
+        feildItem.dataset.row = i;
+        feildItem.dataset.col = j;
+        feildItem.className = "feild-item";
+        ele.appendChild(feildItem);
+      }
+    }
+  });
+}
+generateBattlefeild();
+document.querySelector(".highlight-btn").addEventListener("click", () => {
+  setTimeout(() => {
+    document.querySelector(".battlefeild").style.top = "0";
+  }, 4000);
+});
