@@ -52,14 +52,14 @@ const del = document.querySelector(".delete");
 const leftdoor = document.querySelector(".left-door");
 const rightdoor = document.querySelector(".right-door");
 const stamp = document.querySelector(".stamp");
+const random = document.querySelector(".random");
 
 document.querySelector(".start").addEventListener("click", () => {
   document.querySelector(".strategy-panel").classList.add("open");
 });
 
-del.addEventListener("click", () => {
-  deletefunc();
-});
+del.addEventListener("click", () => deletefunc());
+random.addEventListener("click", () => handleRandom());
 generateGrid(10, 10);
 grids.addEventListener("mouseleave", handlemouseleave);
 for (const i of shipdivs) {
@@ -352,8 +352,7 @@ function invalidArea(row, col) {
   divElement.style.cursor = "not-allowed";
 }
 
-const random = document.querySelector(".random");
-random.addEventListener("click", () => {
+function handleRandom() {
   deletefunc();
   const randomCoords = generateShipCoordinates(shipLengths);
   for (let i = 0; i < 5; i++) {
@@ -373,8 +372,9 @@ random.addEventListener("click", () => {
     const direction = ship.Ship_axis;
     updateimg(row, col, endX, endY, direction, ship);
   });
+  checkplay();
   console.log(Placedships);
-});
+}
 
 document.querySelector(".play").addEventListener("click", (event) => {
   if (Placedships.length < 4) {
