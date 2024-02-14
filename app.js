@@ -58,21 +58,7 @@ document.querySelector(".start").addEventListener("click", () => {
 });
 
 del.addEventListener("click", () => {
-  console.log("deleted");
-  grids.innerHTML = "";
-  Placedships = [];
-  selectedship = null;
-  updatePlaced();
-  checkplay();
-  generateGrid(10, 10);
-  if (document.querySelector(".highlight-btn").classList.contains("blink")) {
-    console.log("blinking");
-    document.querySelector(".highlight-btn").classList.toggle("blink");
-  }
-  var image = document.querySelector(".playimg");
-  image.src = "Assests/play1-nbg.png";
-  image.style.cursor = "not-allowed";
-  gamestarted = 0;
+  deletefunc();
 });
 generateGrid(10, 10);
 grids.addEventListener("mouseleave", handlemouseleave);
@@ -111,7 +97,23 @@ function shipSelector(i) {
   updatePlaced();
   curr.style.backgroundColor = "#4287f5";
 }
-
+function deletefunc() {
+  console.log("deleted");
+  grids.innerHTML = "";
+  Placedships = [];
+  selectedship = null;
+  updatePlaced();
+  checkplay();
+  generateGrid(10, 10);
+  if (document.querySelector(".highlight-btn").classList.contains("blink")) {
+    console.log("blinking");
+    document.querySelector(".highlight-btn").classList.toggle("blink");
+  }
+  var image = document.querySelector(".playimg");
+  image.src = "Assests/play1-nbg.png";
+  image.style.cursor = "not-allowed";
+  gamestarted = 0;
+}
 function generateGrid(rows, cols) {
   const parentDiv = document.querySelector(".grids");
   grids.addEventListener("mouseleave", handlemouseleave);
@@ -187,15 +189,15 @@ function handlegridclick(event) {
   const isval = isvalid(row, col);
 
   if (isval) {
-    insertimg(row, col);
+    const direction = dir.innerText;
+    insertimg(row, col, direction);
   }
 }
 
-function insertimg(row, col) {
+function insertimg(row, col, direction) {
   let endX = row,
     endY = col;
-  let width, height, link;
-  if (dir.innerText == "Y") {
+  if (direction == "Y") {
     endX = row + selectedship.len - 1;
   } else {
     endY = col + selectedship.len - 1;
@@ -206,8 +208,10 @@ function insertimg(row, col) {
     return;
   }
   updatedetails(row, col, endX, endY);
-
-  if (dir.innerText == "X") {
+  updateimg(row, col, endX, endY, direction, selectedship);
+}
+function updateimg(row, col, endX, endY, direction, selectedship) {
+  if (direction == "X") {
     let j = 1;
     for (let i = col; i <= endY; i++) {
       const img = document.createElement("img");
@@ -217,7 +221,7 @@ function insertimg(row, col) {
       img.src = link;
       img.classList.add("img-container");
 
-      const e = `[data-row="${row}"][data-col="${i}"]`;
+      const e = `.grid-item[data-row="${row}"][data-col="${i}"]`;
       const imgdiv = document.querySelector(e);
       img.style.backgroundColor = "#E5E7EB";
       imgdiv.innerHTML = "";
@@ -232,7 +236,7 @@ function insertimg(row, col) {
       img.src = link;
       img.style.height = "100%";
       img.style.width = "100%";
-      const e = `[data-row="${i}"][data-col="${col}"]`;
+      const e = `.grid-item[data-row="${i}"][data-col="${col}"]`;
       const imgdiv = document.querySelector(e);
       img.style.backgroundColor = "#E5E7EB";
       imgdiv.innerHTML = "";
@@ -348,6 +352,30 @@ function invalidArea(row, col) {
   divElement.style.cursor = "not-allowed";
 }
 
+const random = document.querySelector(".random");
+random.addEventListener("click", () => {
+  deletefunc();
+  const randomCoords = generateShipCoordinates(shipLengths);
+  for (let i = 0; i < 5; i++) {
+    ships[i].coords = randomCoords[i];
+    if (randomCoords[i][0][0] == randomCoords[i][1][0]) {
+      ships[i].Ship_axis = "X";
+    } else {
+      ships[i].Ship_axis = "Y";
+    }
+    Placedships.push(ships[i]);
+  }
+  Placedships.forEach((ship) => {
+    const row = ship.coords[0][0];
+    const col = ship.coords[0][1];
+    const endX = ship.coords[1][0];
+    const endY = ship.coords[1][1];
+    const direction = ship.Ship_axis;
+    updateimg(row, col, endX, endY, direction, ship);
+  });
+  console.log(Placedships);
+});
+
 document.querySelector(".play").addEventListener("click", (event) => {
   if (Placedships.length < 4) {
     console.log("returned");
@@ -427,9 +455,175 @@ function generateBattlefeild() {
     }
   });
 }
+function arrangeBattlefeild(shipsArr) {
+  shipsArr.forEach((ship) => {
+    const row = ship.coords[0][0];
+    const col = ship.coords[0][1];
+    const endX = ship.coords[1][0];
+    const endY = ship.coords[1][1];
+    const direction = ship.Ship_axis;
+    if (direction == "X") {
+      let j = 1;
+      for (let i = col; i <= endY; i++) {
+        const img = document.createElement("img");
+        const link = `Ships/${ship.name}/${ship.name}${j}.png`;
+        j++;
+        img.src = link;
+        img.classList.add("img-container");
+        const e = `.feild-item[data-row="${row}"][data-col="${i}"]`;
+        const imgdiv = document.querySelector(e);
+        img.style.backgroundColor = "#E5E7EB";
+        imgdiv.innerHTML = "";
+        imgdiv.appendChild(img.cloneNode(true));
+      }
+    } else {
+      let j = 1;
+      for (let i = row; i <= endX; i++) {
+        const img = document.createElement("img");
+        const link = `Ships/${selectedship.name}-vert/${selectedship.name}${j}.png`;
+        j++;
+        img.src = link;
+        img.style.height = "100%";
+        img.style.width = "100%";
+        const e = `.feild-item[data-row="${i}"][data-col="${col}"]`;
+        const imgdiv = document.querySelector(e);
+        img.style.backgroundColor = "#E5E7EB";
+        imgdiv.innerHTML = "";
+        imgdiv.appendChild(img.cloneNode(true));
+      }
+    }
+  });
+}
+
 generateBattlefeild();
 document.querySelector(".highlight-btn").addEventListener("click", () => {
   setTimeout(() => {
     document.querySelector(".battlefeild").style.top = "0";
+    setTimeout(() => {
+      arrangeBattlefeild(Placedships);
+    }, 1000);
   }, 4000);
 });
+//
+const shipLengths = [6, 5, 4, 3, 2];
+const coordinates = generateShipCoordinates(shipLengths);
+console.log(coordinates);
+
+function generateShipCoordinates(shipLengths) {
+  // Validate input ship lengths
+  if (!shipLengths || !Array.isArray(shipLengths) || shipLengths.length !== 5) {
+    throw new Error(
+      "Invalid ship lengths: Must be an array of 5 integer lengths."
+    );
+  }
+
+  const boardSize = 10; // Adjust if your board has different dimensions
+
+  // Create an empty array to store generated ship coordinates
+  const shipCoordinates = [];
+
+  const directions = ["horizontal", "vertical"];
+
+  // Iterate through ship lengths in decreasing order (largest ships first)
+  for (let i = shipLengths.length - 1; i >= 0; i--) {
+    let shipLength = shipLengths[i];
+    let validPlacement = false;
+
+    // Repeatedly attempt to place the ship until a valid position is found
+    while (!validPlacement) {
+      // Randomly choose starting coordinates considering both vertical and horizontal placements
+      const startingX = Math.floor(
+        Math.random() * (boardSize - shipLength + 1)
+      );
+      const startingY = Math.floor(randomIntInRange(0, boardSize - shipLength));
+
+      // Randomly choose a direction
+      const direction =
+        directions[Math.floor(Math.random() * directions.length)];
+
+      // Calculate end coordinates based on direction and length
+      let endX, endY;
+      if (direction === "horizontal") {
+        endX = startingX + shipLength - 1;
+      } else {
+        endY = startingY + shipLength - 1;
+      }
+
+      // Check if the ship fits within the board boundaries in the chosen direction
+      if (
+        (direction === "horizontal" && endX >= boardSize) ||
+        (direction === "vertical" && endY >= boardSize)
+      ) {
+        continue; // Ship overflows the board, retry
+      }
+
+      // Check for collisions with previously placed ships and their surrounding spaces
+      let collision = false;
+      for (let j = 0; j < shipCoordinates.length; j++) {
+        const existingShip = shipCoordinates[j];
+        if (
+          isCollidingWithArea(startingX, startingY, endX, endY, existingShip)
+        ) {
+          collision = true;
+          break;
+        }
+      }
+
+      if (!collision) {
+        // No collisions, accept the placement
+        validPlacement = true;
+
+        // Store the coordinates in the desired format
+        if (direction === "horizontal") {
+          shipCoordinates.push([
+            [startingX, startingY],
+            [endX, startingY],
+          ]);
+        } else {
+          shipCoordinates.push([
+            [startingX, startingY],
+            [startingX, endY],
+          ]);
+        }
+      }
+    }
+  }
+
+  return shipCoordinates;
+}
+
+// Helper function to generate a random integer within a range (inclusive)
+function randomIntInRange(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+// Helper function to check for collisions with a ship's area (including surrounding spaces)
+function isCollidingWithArea(x1, y1, x2, y2, ship) {
+  const [[shipStartingX, shipStartingY], [shipEndX, shipEndY]] = ship;
+
+  // Expand the potential collision area by 1 in each direction (to prevent ships being placed too close)
+  const expandedStartingX = x1 - 1;
+  const expandedStartingY = y1 - 1;
+  const expandedEndX = x2 + 1;
+  const expandedEndY = y2 + 1;
+
+  // Check if any part of the new ship's expanded area overlaps with the existing ship or its expanded area
+  return (
+    (expandedStartingX >= shipStartingX - 1 &&
+      expandedStartingX <= shipEndX + 1 &&
+      expandedStartingY >= shipStartingY - 1 &&
+      expandedStartingY <= shipEndY + 1) ||
+    (expandedEndX >= shipStartingX - 1 &&
+      expandedEndX <= shipEndX + 1 &&
+      expandedEndY >= shipStartingY - 1 &&
+      expandedEndY <= shipEndY + 1) ||
+    (shipStartingX >= expandedStartingX - 1 &&
+      shipStartingX <= expandedEndX + 1 &&
+      shipStartingY >= expandedStartingY - 1 &&
+      shipStartingY <= expandedEndY + 1) ||
+    (shipEndX >= expandedStartingX - 1 &&
+      shipEndX <= expandedEndX + 1 &&
+      shipEndY >= expandedStartingY - 1 &&
+      shipEndY <= expandedEndY + 1)
+  );
+}

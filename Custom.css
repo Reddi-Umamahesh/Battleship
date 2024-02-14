@@ -70,15 +70,39 @@
 .gamestarted{
     cursor: wait;
 }
+footer {
+  bottom: -3%;
+}
+footer:hover{
+  bottom: 0;
+}
 .bf{
   height: 100%;
   width: 50%;
-  border: 1PX solid black;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.bf h3{
+  color: whitesmoke;
+  font-family: 'Kanit',sans-serif;
+  font-weight: 400;
+  font-size: normal;
+  height: 7vh;
+  text-align: center;
+  width: 100%;
+  font-size: xx-large;
+}
+.bf .div{
+  height: 6%;
+  width: 100%;
+
 }
 .feild{
-  height: 85%;
-  width: 65%;
-  margin-top: 5%;
+  height: 80%;
+  width: 60%;
+  
  
   display: flex;
   flex-wrap: wrap;
@@ -96,5 +120,14 @@
   width: 50%;
   border: 1.5px solid white;
   border-radius: 20%;
+  font-family: 'Kanit',sans-serif;
+  font-weight: 500;
+  font-size: normal;
+  color: white;
+  display: flex;
+  font-size: 3.5vh;
+  text-align: center;
+  align-items:center;
+  justify-content: center;
   background: linear-gradient(90deg, rgb(55, 55, 55) 0%, rgb(41, 41, 41) 29%, rgb(41, 41, 41) 76%, rgb(56, 56, 56) 100%);
 }
