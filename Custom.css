@@ -100,10 +100,8 @@ footer:hover{
 
 }
 .feild{
-  height: 80%;
+  height: 75%;
   width: 60%;
-  
- 
   display: flex;
   flex-wrap: wrap;
 }
@@ -113,6 +111,21 @@ footer:hover{
   margin-bottom: 1%;
   margin-right: 1%;
   border: 1px solid white;
+}
+.enemy-item{
+  height: 9%;
+  width: 9%;
+  margin-bottom: 1%;
+  margin-right: 1%;
+  border: 1px solid white;
+  cursor: crosshair;
+}
+.enemy-item:hover{
+  background-color: #006400;
+}
+.enemy img:hover{
+  color: #006400;
+  cursor: pointer;
 }
 
 .cmd{

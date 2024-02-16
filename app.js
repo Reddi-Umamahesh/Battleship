@@ -40,6 +40,7 @@ const ships = [
     is_sunked: 0,
   },
 ];
+let computerships = JSON.parse(JSON.stringify(ships));
 let Placedships = [];
 let selectedship;
 let ship_dispname = document.querySelector(".sname");
@@ -364,6 +365,10 @@ function handleRandom() {
     }
     Placedships.push(ships[i]);
   }
+  if (!checkValidy(Placedships)) {
+    handleRandom();
+  }
+
   Placedships.forEach((ship) => {
     const row = ship.coords[0][0];
     const col = ship.coords[0][1];
@@ -373,7 +378,48 @@ function handleRandom() {
     updateimg(row, col, endX, endY, direction, ship);
   });
   checkplay();
-  console.log(Placedships);
+}
+
+function checkValidy(Placedships) {
+  let pairs = [];
+  Placedships.forEach((element) => {
+    let dir = element.Ship_axis;
+    let x = element.coords[0][0];
+    let y = element.coords[0][1];
+    for (let i = 0; i < element.len; i++) {
+      let temp = [];
+      if (dir == "X") {
+        temp.push(x);
+        temp.push(y + i);
+      } else {
+        temp.push(x + i);
+        temp.push(y);
+      }
+      pairs.push(temp);
+    }
+  });
+  if (pairs.length < 20) {
+    return false;
+  }
+  const val = hasRepeatedPairs(pairs);
+  if (val) {
+    return false;
+  } else {
+    return true;
+  }
+}
+function hasRepeatedPairs(pairs) {
+  const pairSet = new Set();
+  for (const pair of pairs) {
+    const pairString = JSON.stringify(pair);
+    if (pairSet.has(pairString)) {
+      return true;
+    } else {
+      pairSet.add(pairString);
+    }
+  }
+
+  return false;
 }
 
 document.querySelector(".play").addEventListener("click", (event) => {
@@ -442,20 +488,67 @@ function battlebegins() {
 function generateBattlefeild() {
   console.log("working");
   const parent = document.querySelectorAll(".feild");
-  parent.forEach((ele) => {
-    ele.innerHTML = "";
-    for (let i = 0; i < 10; i++) {
-      for (let j = 0; j < 10; j++) {
-        const feildItem = document.createElement("div");
-        feildItem.dataset.row = i;
-        feildItem.dataset.col = j;
-        feildItem.className = "feild-item";
-        ele.appendChild(feildItem);
-      }
+  const friendly = document.querySelector(".friendly");
+  const enemy = document.querySelector(".enemy");
+  friendly.innerHTML = "";
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 10; j++) {
+      const feildItem = document.createElement("div");
+      feildItem.dataset.row = i;
+      feildItem.dataset.col = j;
+      feildItem.className = "feild-item";
+      friendly.appendChild(feildItem);
     }
-  });
+  }
+  enemy.innerHTML = "";
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 10; j++) {
+      const feildItem = document.createElement("div");
+      feildItem.dataset.row = i;
+      feildItem.dataset.col = j;
+
+      feildItem.addEventListener("mouseover", handleEnemyhover);
+      feildItem.addEventListener("click", handleEnemyclick);
+
+      feildItem.className = "enemy-item";
+      enemy.appendChild(feildItem);
+    }
+  }
 }
-function arrangeBattlefeild(shipsArr) {
+function handleEnemyhover(event) {
+  if (control != "user") {
+    return;
+  }
+  let { row, col } = event.target.dataset;
+  row = parseInt(row);
+  col = parseInt(col);
+  if (isNaN(row) || isNaN(col)) {
+    return;
+  }
+  const e = `.enemy-item[data-row="${row}"][data-col="${col}"]`;
+  let ele = document.querySelector(e);
+}
+function handleEnemyclick(event) {
+  console.log("clicked");
+}
+function ArrangeComputer() {
+  const randomCoords = generateShipCoordinates(shipLengths);
+  for (let i = 0; i < 5; i++) {
+    computerships[i].coords = randomCoords[i];
+    if (randomCoords[i][0][0] == randomCoords[i][1][0]) {
+      computerships[i].Ship_axis = "X";
+    } else {
+      computerships[i].Ship_axis = "Y";
+    }
+  }
+  if (!checkValidy(computerships)) {
+    ArrangeComputer();
+  }
+  console.log(computerships);
+  arrangeBattlefeild(computerships, "enemy-item");
+}
+
+function arrangeBattlefeild(shipsArr, childname) {
   shipsArr.forEach((ship) => {
     const row = ship.coords[0][0];
     const col = ship.coords[0][1];
@@ -470,7 +563,12 @@ function arrangeBattlefeild(shipsArr) {
         j++;
         img.src = link;
         img.classList.add("img-container");
-        const e = `.feild-item[data-row="${row}"][data-col="${i}"]`;
+        let e;
+        if (childname == "enemy-item") {
+          e = `.enemy-item[data-row="${row}"][data-col="${i}"]`;
+        } else {
+          e = `.feild-item[data-row="${row}"][data-col="${i}"]`;
+        }
         const imgdiv = document.querySelector(e);
         img.style.backgroundColor = "#E5E7EB";
         imgdiv.innerHTML = "";
@@ -480,12 +578,17 @@ function arrangeBattlefeild(shipsArr) {
       let j = 1;
       for (let i = row; i <= endX; i++) {
         const img = document.createElement("img");
-        const link = `Ships/${selectedship.name}-vert/${selectedship.name}${j}.png`;
+        const link = `Ships/${ship.name}-vert/${ship.name}${j}.png`;
         j++;
         img.src = link;
         img.style.height = "100%";
         img.style.width = "100%";
-        const e = `.feild-item[data-row="${i}"][data-col="${col}"]`;
+        let e;
+        if (childname == "enemy-item") {
+          e = `.enemy-item[data-row="${i}"][data-col="${col}"]`;
+        } else {
+          e = `.feild-item[data-row="${i}"][data-col="${col}"]`;
+        }
         const imgdiv = document.querySelector(e);
         img.style.backgroundColor = "#E5E7EB";
         imgdiv.innerHTML = "";
@@ -500,48 +603,41 @@ document.querySelector(".highlight-btn").addEventListener("click", () => {
   setTimeout(() => {
     document.querySelector(".battlefeild").style.top = "0";
     setTimeout(() => {
-      arrangeBattlefeild(Placedships);
+      arrangeBattlefeild(Placedships, "feild-item");
+      ArrangeComputer();
     }, 1000);
   }, 4000);
 });
-//
+let control = "user";
+function userTurn() {}
+
 const shipLengths = [6, 5, 4, 3, 2];
-const coordinates = generateShipCoordinates(shipLengths);
-console.log(coordinates);
 
 function generateShipCoordinates(shipLengths) {
-  // Validate input ship lengths
   if (!shipLengths || !Array.isArray(shipLengths) || shipLengths.length !== 5) {
     throw new Error(
       "Invalid ship lengths: Must be an array of 5 integer lengths."
     );
   }
 
-  const boardSize = 10; // Adjust if your board has different dimensions
-
-  // Create an empty array to store generated ship coordinates
+  const boardSize = 10;
   const shipCoordinates = [];
 
   const directions = ["horizontal", "vertical"];
 
-  // Iterate through ship lengths in decreasing order (largest ships first)
   for (let i = shipLengths.length - 1; i >= 0; i--) {
     let shipLength = shipLengths[i];
     let validPlacement = false;
 
-    // Repeatedly attempt to place the ship until a valid position is found
     while (!validPlacement) {
-      // Randomly choose starting coordinates considering both vertical and horizontal placements
       const startingX = Math.floor(
         Math.random() * (boardSize - shipLength + 1)
       );
       const startingY = Math.floor(randomIntInRange(0, boardSize - shipLength));
 
-      // Randomly choose a direction
       const direction =
         directions[Math.floor(Math.random() * directions.length)];
 
-      // Calculate end coordinates based on direction and length
       let endX, endY;
       if (direction === "horizontal") {
         endX = startingX + shipLength - 1;
@@ -549,15 +645,13 @@ function generateShipCoordinates(shipLengths) {
         endY = startingY + shipLength - 1;
       }
 
-      // Check if the ship fits within the board boundaries in the chosen direction
       if (
         (direction === "horizontal" && endX >= boardSize) ||
         (direction === "vertical" && endY >= boardSize)
       ) {
-        continue; // Ship overflows the board, retry
+        continue;
       }
 
-      // Check for collisions with previously placed ships and their surrounding spaces
       let collision = false;
       for (let j = 0; j < shipCoordinates.length; j++) {
         const existingShip = shipCoordinates[j];
@@ -570,10 +664,8 @@ function generateShipCoordinates(shipLengths) {
       }
 
       if (!collision) {
-        // No collisions, accept the placement
         validPlacement = true;
 
-        // Store the coordinates in the desired format
         if (direction === "horizontal") {
           shipCoordinates.push([
             [startingX, startingY],
@@ -592,22 +684,18 @@ function generateShipCoordinates(shipLengths) {
   return shipCoordinates;
 }
 
-// Helper function to generate a random integer within a range (inclusive)
 function randomIntInRange(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-// Helper function to check for collisions with a ship's area (including surrounding spaces)
 function isCollidingWithArea(x1, y1, x2, y2, ship) {
   const [[shipStartingX, shipStartingY], [shipEndX, shipEndY]] = ship;
 
-  // Expand the potential collision area by 1 in each direction (to prevent ships being placed too close)
   const expandedStartingX = x1 - 1;
   const expandedStartingY = y1 - 1;
   const expandedEndX = x2 + 1;
   const expandedEndY = y2 + 1;
 
-  // Check if any part of the new ship's expanded area overlaps with the existing ship or its expanded area
   return (
     (expandedStartingX >= shipStartingX - 1 &&
       expandedStartingX <= shipEndX + 1 &&
