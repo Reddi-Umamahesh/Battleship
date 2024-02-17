@@ -3,6 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>Document</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="Custom.css" />
@@ -57,23 +63,28 @@
           style="
             color: #e0e1dd;
             font-family: 'Anton', sans-serif;
-            font-size: 150px;
+            font-size: 25vh;
+            height: 35%;
+            width: 60%;
           "
           class="text-center"
         >
           BATTLESHIP
         </h1>
-        <div class="details flex flex-col h-28 justify-start">
+        <div
+          style="height: 20%; font-size: 4vh"
+          class="details flex flex-col h-28 justify-start items-center"
+        >
           <label for="name" class="text-slate-80 text-white">Player Name</label>
           <input
-            style="font-family: 'Anton', sans-serif"
+            style="font-family: 'Anton', sans-serif; width: 60%"
             type="text"
             class="name h-10 w-24 bg-white text-center text-opacity-60"
             value="Thunderforge"
           />
         </div>
         <button
-          style="font-family: 'Anton', sans-serif"
+          style="font-family: 'Anton', sans-serif; height: 10%; font-size: 4vh"
           class="start h-16 w-36 border-2 text-2xl bg-slate-300 hover:bg-white"
         >
           Start Game
@@ -223,6 +234,7 @@
             </div>
           </div>
           <div style="height: 80%" class="emp2 w-1/12 h-96"></div>
+          <div style="height: 5%; width: 100%" class="space"></div>
         </div>
         <div class="left-door fixed"></div>
         <div class="right-door fixed"></div>
