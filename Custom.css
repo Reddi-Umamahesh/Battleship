@@ -18,6 +18,14 @@
       top: -300%;
       position: fixed;
   }
+  .img-container {
+    top: 0;
+    left: 0;
+    object-fit: fill;
+    height: 100%;
+    width: 100%;
+    background-size:cover;
+}
 
   .left-door {
     left: 0;
@@ -118,20 +126,35 @@ footer:hover{
   margin-bottom: 1%;
   margin-right: 1%;
   border: 1px solid white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: crosshair;
 }
 .enemy-item:hover{
   background-color: #006400;
 }
-.enemy img:hover{
-  color: #006400;
-  cursor: pointer;
-}
+
 .dot{
   height: 50%;
   width: 50%;
   border-radius: 50%;
 }
+.destroyed{
+  cursor: not-allowed;
+}
+.sunked{
+  top: 0;
+    left: 0;
+    object-fit: fill;
+    height: 100%;
+    width: 100%;
+    background-size:cover;
+  opacity: 0;
+  cursor: not-allowed;
+  transition: opacity 1.5s ease-in-out;
+}
+
 .cmd{
   height: 50%;
   width: 50%;

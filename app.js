@@ -355,6 +355,7 @@ function invalidArea(row, col) {
 
 function handleRandom() {
   deletefunc();
+  pairs.length = 0;
   const randomCoords = generateShipCoordinates(shipLengths);
   for (let i = 0; i < 5; i++) {
     ships[i].coords = randomCoords[i];
@@ -365,19 +366,20 @@ function handleRandom() {
     }
     Placedships.push(ships[i]);
   }
-  if (!checkValidy(Placedships)) {
+  const isval = checkValidy(Placedships);
+  if (!isval) {
     handleRandom();
+  } else {
+    Placedships.forEach((ship) => {
+      const row = ship.coords[0][0];
+      const col = ship.coords[0][1];
+      const endX = ship.coords[1][0];
+      const endY = ship.coords[1][1];
+      const direction = ship.Ship_axis;
+      updateimg(row, col, endX, endY, direction, ship);
+    });
+    checkplay();
   }
-
-  Placedships.forEach((ship) => {
-    const row = ship.coords[0][0];
-    const col = ship.coords[0][1];
-    const endX = ship.coords[1][0];
-    const endY = ship.coords[1][1];
-    const direction = ship.Ship_axis;
-    updateimg(row, col, endX, endY, direction, ship);
-  });
-  checkplay();
 }
 let pairs = [];
 function checkValidy(Placedships) {
@@ -443,7 +445,6 @@ document.querySelector(".play").addEventListener("click", (event) => {
 let gamestarted = 0;
 function changeimg() {
   var image = document.querySelector(".playimg");
-  console.log(image.src);
   if (gamestarted > 0) {
     image.style.cursor = "";
   } else {
@@ -514,6 +515,13 @@ function generateBattlefeild() {
     }
   }
 }
+let destroyedshipsComp = [
+  { damage: 0 },
+  { damage: 0 },
+  { damage: 0 },
+  { damage: 0 },
+  { damage: 0 },
+];
 function handleEnemyhover(event) {
   if (control != "user") {
     return;
@@ -528,7 +536,6 @@ function handleEnemyhover(event) {
   let ele = document.querySelector(e);
 }
 function handleEnemyclick(event) {
-  console.log("clicked");
   if (control != "user") {
     return;
   }
@@ -536,27 +543,118 @@ function handleEnemyclick(event) {
   row = parseInt(row);
   col = parseInt(col);
   let temp = [row, col];
+  if (isNaN(row) || isNaN(col)) {
+    return;
+  }
   const e = `.enemy-item[data-row="${row}"][data-col="${col}"]`;
   let ele = document.querySelector(e);
-  if (pairs.contains(temp)) {
-    console.log("red");
+  if (ele.classList.contains("destroyed")) {
+    return;
+  }
+  ele.classList.add("destroyed");
+  let isrep = false;
+  for (let i = 0; i < 20; i++) {
+    if (computerPlacements[i][0] == row && computerPlacements[i][1] == col) {
+      isrep = true;
+      if (i < 2) {
+        destroyedshipsComp[0].damage++;
+      } else if (i < 5) {
+        destroyedshipsComp[1].damage++;
+      } else if (i < 9) {
+        destroyedshipsComp[2].damage++;
+      } else if (i < 14) {
+        destroyedshipsComp[3].damage++;
+      } else {
+        destroyedshipsComp[4].damage++;
+      }
+    }
+  }
+  if (isrep) {
     const dot = document.createElement("div");
     dot.className = "dot";
-    dot.style.backgroundColor = "#8B0000";
+    dot.style.backgroundColor = "red";
     ele.append(dot);
   } else {
-    console.log("white");
     const dot = document.createElement("div");
     dot.className = "dot";
     dot.style.backgroundColor = "#fff";
     ele.append(dot);
   }
-  if (isNaN(row) || isNaN(col)) {
-    return;
+  checkdestroyed(destroyedshipsComp);
+}
+function checkdestroyed(ships) {
+  if (ships[0].damage == 2) {
+    computerships[0].is_sunked = 1;
+    addDestroyedships(computerships[0]);
+  }
+  if (ships[1].damage == 3) {
+    computerships[1].is_sunked = 1;
+    addDestroyedships(computerships[1]);
+  }
+  if (ships[2].damage == 4) {
+    computerships[2].is_sunked = 1;
+    addDestroyedships(computerships[2]);
+  }
+  if (ships[3].damage == 5) {
+    computerships[3].is_sunked = 1;
+    addDestroyedships(computerships[3]);
+  }
+  if (ships[4].damage == 6) {
+    computerships[4].is_sunked = 1;
+    addDestroyedships(computerships[4]);
   }
 }
+function addDestroyedships(ship) {
+  let row = ship.coords[0][0];
+  let col = ship.coords[0][1];
+  let endX = ship.coords[1][0];
+  let endY = ship.coords[1][1];
+  let dir = ship.Ship_axis;
+  if (dir == "X") {
+    let j = 1;
+    for (let i = col; i <= endY; i++) {
+      const img = document.createElement("img");
+      const link = `Ships/${ship.name}/${ship.name}${j}.png`;
+      j++;
+      img.src = link;
+      img.classList.add("destroyed");
+      img.classList.add("sunked");
+      setTimeout(() => {
+        img.style.opacity = "1";
+        img.style.backgroundColor = "#8b0000";
+        let e = `.enemy-item[data-row="${row}"][data-col="${i}"]`;
+        const imgdiv = document.querySelector(e);
+        imgdiv.innerHTML = "";
+        imgdiv.appendChild(img.cloneNode(true));
+      }, 500);
+    }
+  } else {
+    let j = 1;
+    for (let i = row; i <= endX; i++) {
+      const img = document.createElement("img");
+      const link = `Ships/${ship.name}-vert/${ship.name}${j}.png`;
+      j++;
+      img.src = link;
+      img.classList.add("destoryed");
+      img.classList.add("sunked");
+      setTimeout(() => {
+        img.style.opacity = "1";
+        img.style.backgroundColor = "#8b0000";
+        let e = `.enemy-item[data-row="${i}"][data-col="${col}"]`;
+        const imgdiv = document.querySelector(e);
+        imgdiv.innerHTML = "";
+        imgdiv.appendChild(img.cloneNode(true));
+      }, 500);
+    }
+  }
+}
+let computerPlacements;
+let compPlacementsarray;
 function ArrangeComputer() {
-  const randomCoords = generateShipCoordinates(shipLengths);
+  let data = generateparis();
+  const randomCoords = data[0];
+  computerPlacements = data[1];
+  compPlacementsarray = data[0];
   for (let i = 0; i < 5; i++) {
     computerships[i].coords = randomCoords[i];
     if (randomCoords[i][0][0] == randomCoords[i][1][0]) {
@@ -565,11 +663,8 @@ function ArrangeComputer() {
       computerships[i].Ship_axis = "Y";
     }
   }
-  if (!checkValidy(computerships)) {
-    ArrangeComputer();
-  }
   console.log(computerships);
-  //arrangeBattlefeild(computerships, "enemy-item");
+  // arrangeBattlefeild(computerships, "enemy-item");
 }
 
 function arrangeBattlefeild(shipsArr, childname) {
@@ -738,4 +833,37 @@ function isCollidingWithArea(x1, y1, x2, y2, ship) {
       shipEndY >= expandedStartingY - 1 &&
       shipEndY <= expandedEndY + 1)
   );
+}
+
+function generateparis() {
+  pairs.length = 0;
+  let randomCoords = generateShipCoordinates(shipLengths);
+  let direction;
+  for (let i = 0; i < 5; i++) {
+    if (randomCoords[i][0][0] == randomCoords[i][1][0]) {
+      direction = "X";
+    } else {
+      direction = "Y";
+    }
+    let x = randomCoords[i][0][0];
+    let y = randomCoords[i][0][1];
+    for (let j = 0; j < i + 2; j++) {
+      let temp = [];
+      if (direction == "X") {
+        temp.push(x);
+        temp.push(y + j);
+      } else {
+        temp.push(x + j);
+        temp.push(y);
+      }
+      pairs.push(temp);
+    }
+  }
+  let isval = hasRepeatedPairs(pairs);
+  if (isval) {
+    return generateparis();
+  } else {
+    let data = [randomCoords, pairs];
+    return data;
+  }
 }
