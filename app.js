@@ -379,9 +379,8 @@ function handleRandom() {
   });
   checkplay();
 }
-
+let pairs = [];
 function checkValidy(Placedships) {
-  let pairs = [];
   Placedships.forEach((element) => {
     let dir = element.Ship_axis;
     let x = element.coords[0][0];
@@ -530,6 +529,31 @@ function handleEnemyhover(event) {
 }
 function handleEnemyclick(event) {
   console.log("clicked");
+  if (control != "user") {
+    return;
+  }
+  let { row, col } = event.target.dataset;
+  row = parseInt(row);
+  col = parseInt(col);
+  let temp = [row, col];
+  const e = `.enemy-item[data-row="${row}"][data-col="${col}"]`;
+  let ele = document.querySelector(e);
+  if (pairs.contains(temp)) {
+    console.log("red");
+    const dot = document.createElement("div");
+    dot.className = "dot";
+    dot.style.backgroundColor = "#8B0000";
+    ele.append(dot);
+  } else {
+    console.log("white");
+    const dot = document.createElement("div");
+    dot.className = "dot";
+    dot.style.backgroundColor = "#fff";
+    ele.append(dot);
+  }
+  if (isNaN(row) || isNaN(col)) {
+    return;
+  }
 }
 function ArrangeComputer() {
   const randomCoords = generateShipCoordinates(shipLengths);
@@ -545,7 +569,7 @@ function ArrangeComputer() {
     ArrangeComputer();
   }
   console.log(computerships);
-  arrangeBattlefeild(computerships, "enemy-item");
+  //arrangeBattlefeild(computerships, "enemy-item");
 }
 
 function arrangeBattlefeild(shipsArr, childname) {
@@ -570,7 +594,7 @@ function arrangeBattlefeild(shipsArr, childname) {
           e = `.feild-item[data-row="${row}"][data-col="${i}"]`;
         }
         const imgdiv = document.querySelector(e);
-        img.style.backgroundColor = "#E5E7EB";
+        img.style.backgroundColor = "#215959";
         imgdiv.innerHTML = "";
         imgdiv.appendChild(img.cloneNode(true));
       }
@@ -590,7 +614,7 @@ function arrangeBattlefeild(shipsArr, childname) {
           e = `.feild-item[data-row="${i}"][data-col="${col}"]`;
         }
         const imgdiv = document.querySelector(e);
-        img.style.backgroundColor = "#E5E7EB";
+        img.style.backgroundColor = "#215959";
         imgdiv.innerHTML = "";
         imgdiv.appendChild(img.cloneNode(true));
       }
