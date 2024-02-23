@@ -71,6 +71,7 @@
     justify-content: center;
     align-items: center;
     margin-left: 10%;
+    
 }
 .playimg{
     cursor: not-allowed;
@@ -123,6 +124,9 @@ footer:hover{
   width: 9%;
   margin-bottom: 1%;
   margin-right: 1%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: 1px solid white;
 }
 .enemy-item{

@@ -54,6 +54,21 @@ const leftdoor = document.querySelector(".left-door");
 const rightdoor = document.querySelector(".right-door");
 const stamp = document.querySelector(".stamp");
 const random = document.querySelector(".random");
+let destroyedshipsComp = [
+  { damage: 0 },
+  { damage: 0 },
+  { damage: 0 },
+  { damage: 0 },
+  { damage: 0 },
+];
+let user_Coords = [];
+let user_DupCoords = [];
+for (let i = 0; i < 10; i++) {
+  for (let j = 0; j < 10; j++) {
+    user_Coords.push([i, j]);
+    user_DupCoords.push([i, j]);
+  }
+}
 
 document.querySelector(".start").addEventListener("click", () => {
   document.querySelector(".strategy-panel").classList.add("open");
@@ -409,6 +424,45 @@ function checkValidy(Placedships) {
     return true;
   }
 }
+function convertTo2DArray(coords) {
+  const result = [];
+  let startIndex = 0;
+  for (let size of [2, 3, 4, 5]) {
+    const ship = coords.slice(startIndex, startIndex + size);
+    result.push(ship);
+    startIndex += size;
+  }
+  return result;
+}
+function checkShipsValidity(shipCoords) {
+  for (let i = 0; i < shipCoords.length; i++) {
+    const currentShip = shipCoords[i];
+    for (let j = 0; j < currentShip.length; j++) {
+      const [x, y] = currentShip[j];
+      for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+          if (dx === 0 && dy === 0) continue;
+          const adjacentX = x + dx;
+          const adjacentY = y + dy;
+          for (let k = 0; k < shipCoords.length; k++) {
+            if (k !== i) {
+              const otherShip = shipCoords[k];
+              for (let l = 0; l < otherShip.length; l++) {
+                const [otherX, otherY] = otherShip[l];
+                if (adjacentX === otherX && adjacentY === otherY) {
+                  return false;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return true;
+}
+
 function hasRepeatedPairs(pairs) {
   const pairSet = new Set();
   for (const pair of pairs) {
@@ -449,7 +503,7 @@ function changeimg() {
     image.style.cursor = "";
   } else {
     gamestarted++;
-    console.log("img");
+
     image.style.opacity = "0";
     setTimeout(function () {
       image.src = "Assests/pause1.png";
@@ -515,13 +569,7 @@ function generateBattlefeild() {
     }
   }
 }
-let destroyedshipsComp = [
-  { damage: 0 },
-  { damage: 0 },
-  { damage: 0 },
-  { damage: 0 },
-  { damage: 0 },
-];
+
 function handleEnemyhover(event) {
   if (control != "user") {
     return;
@@ -581,6 +629,11 @@ function handleEnemyclick(event) {
     ele.append(dot);
   }
   checkdestroyed(destroyedshipsComp);
+  setTimeout(() => {
+    control = "comp";
+    console.log("computer Attack");
+    computerAttack();
+  }, 1000);
 }
 function checkdestroyed(ships) {
   if (ships[0].damage == 2) {
@@ -719,13 +772,15 @@ function arrangeBattlefeild(shipsArr, childname) {
 
 generateBattlefeild();
 document.querySelector(".highlight-btn").addEventListener("click", () => {
-  setTimeout(() => {
-    document.querySelector(".battlefeild").style.top = "0";
+  if (Placedships.length == 5) {
     setTimeout(() => {
-      arrangeBattlefeild(Placedships, "feild-item");
-      ArrangeComputer();
-    }, 1000);
-  }, 4000);
+      document.querySelector(".battlefeild").style.top = "0";
+      setTimeout(() => {
+        arrangeBattlefeild(Placedships, "feild-item");
+        ArrangeComputer();
+      }, 1000);
+    }, 4000);
+  }
 });
 let control = "user";
 function userTurn() {}
@@ -834,7 +889,6 @@ function isCollidingWithArea(x1, y1, x2, y2, ship) {
       shipEndY <= expandedEndY + 1)
   );
 }
-
 function generateparis() {
   pairs.length = 0;
   let randomCoords = generateShipCoordinates(shipLengths);
@@ -866,4 +920,168 @@ function generateparis() {
     let data = [randomCoords, pairs];
     return data;
   }
+}
+let prev;
+let Pattack_coords;
+let memory = [];
+function computerAttack() {
+  if (control == "comp") {
+    let coord = user_Coords[getRandomNumber()];
+    console.log(memory);
+    let row = coord[0];
+    let col = coord[1];
+    const e = `.feild-item[data-row="${row}"][data-col="${col}"]`;
+    let ele = document.querySelector(e);
+    if (ele.classList.contains("destroyed")) {
+      console.log("repedted");
+      return;
+    }
+    ele.classList.add("destroyed");
+    const img = ele.querySelector("img");
+    if (img != null) {
+      img.style.backgroundColor = "red";
+      memory.push([row, col]);
+      Pattack_coords = [row, col];
+      // #8b0000
+    } else {
+      const dot = document.createElement("div");
+      dot.className = "dot";
+      dot.style.backgroundColor = "#fff";
+      ele.append(dot);
+    }
+    memory.forEach((element) => {
+      let x = element[0];
+      let y = element[1];
+      if (checkdestruction(x, y)) {
+        console.log("removed");
+        let idx = memory.findIndex((arr) => arr[0] === x && arr[1] === y);
+        memory.splice(idx, 1);
+      }
+    });
+
+    //  let temp = user_Coords.indexOf([row, col]);
+    temp = user_Coords.findIndex((c) => c[0] === row && c[1] === col);
+
+    if (destroyed_coords != null) {
+      destroyed_coords.push(temp);
+    } else {
+      destroyed_coords[0] = 100;
+    }
+    control = "user";
+  }
+}
+let destroyed_coords = [];
+function randomGen() {
+  let range = user_DupCoords.length;
+  let randomNumber = Math.floor(Math.random() * range);
+  let vals = user_DupCoords[randomNumber];
+  let a = vals[0];
+  let b = vals[1];
+  user_DupCoords.splice(randomNumber, 1);
+  const index = user_Coords.findIndex(
+    (coord) => coord[0] === a && coord[1] === b
+  );
+  return index;
+}
+function checkdestruction(row, col) {
+  //left
+  let count = 0;
+  if (row - 1 > 0) {
+    const e = `.feild-item[data-row="${row - 1}"][data-col="${col}"]`;
+    let element = document.querySelector(e);
+    if (element.classList.contains("destroyed")) {
+      count++;
+    }
+  } else {
+    count++;
+  }
+  if (row + 1 <= 9) {
+    const e = `.feild-item[data-row="${row + 1}"][data-col="${col}"]`;
+    let element = document.querySelector(e);
+    if (element.classList.contains("destroyed")) {
+      count++;
+    }
+  } else {
+    count++;
+  }
+  if (col - 1 > 0) {
+    const e = `.feild-item[data-row="${row}"][data-col="${col - 1}"]`;
+    let element = document.querySelector(e);
+    if (element.classList.contains("destroyed")) {
+      count++;
+    }
+  } else {
+    count++;
+  }
+  if (col + 1 <= 9) {
+    const e = `.feild-item[data-row="${row}"][data-col="${col + 1}"]`;
+    let element = document.querySelector(e);
+    if (element.classList.contains("destroyed")) {
+      count++;
+    }
+  } else {
+    count++;
+  }
+  if (count == 4) {
+    return true;
+  }
+  return false;
+}
+function getRandomNumber() {
+  let idx;
+  let randomNumber;
+  if (memory.length > 0) {
+    cords = memory[memory.length - 1];
+    idx = intelligence(cords);
+  } else {
+    return randomGen();
+  }
+  return idx;
+}
+function intelligence(Pattack_coords) {
+  let ele = Pattack_coords;
+  let x = ele[0];
+  let y = ele[1];
+  let a, b;
+  console.log("intelligece", x, y);
+  if (isval_attack(x - 1, y)) {
+    a = x - 1;
+    b = y;
+  } else if (isval_attack(x + 1, y)) {
+    a = x + 1;
+    b = y;
+  } else if (isval_attack(x, y + 1)) {
+    a = x;
+    b = y + 1;
+  } else if (isval_attack(x, y - 1)) {
+    a = x;
+    b = y - 1;
+  } else {
+    return null;
+  }
+  const temp = user_DupCoords.findIndex(
+    (coord) => coord[0] === a && coord[1] === b
+  );
+  user_DupCoords.splice(temp, 1);
+  console.log(a, b);
+  const index = user_Coords.findIndex(
+    (coord) => coord[0] === a && coord[1] === b
+  );
+  return index;
+}
+function isval_attack(x, y) {
+  if (x < 0 || x > 9 || y < 0 || y > 9) {
+    return false;
+  }
+  let row = x;
+  let col = y;
+  const e = `.feild-item[data-row="${row}"][data-col="${col}"]`;
+  let ele = document.querySelector(e);
+  if (ele.classList.contains("destroyed")) {
+    return false;
+  }
+  if (user_Coords[(x, y)] != null) {
+    return true;
+  }
+  return false;
 }
