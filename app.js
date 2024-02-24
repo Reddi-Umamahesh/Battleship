@@ -1276,15 +1276,13 @@ function checkwin() {
   let uc = destroyedshipsComp[2].damage;
   let ud = destroyedshipsComp[3].damage;
   let ue = destroyedshipsComp[4].damage;
-  if (ca == 2) {
-    // && cb == 3 && cc == 4 && cd == 5 && ce == 6
+  if (ca == 2 && cb == 3 && cc == 4 && cd == 5 && ce == 6) {
     won = `${nam}`;
     const d = document.querySelector(".blured");
     d.style.top = "0";
     return true;
   }
-  if (ua == 2) {
-    // && ub == 3 && uc == 4 && ud == 5 && ue == 6
+  if (ua == 2 && ub == 3 && uc == 4 && ud == 5 && ue == 6) {
     won = "Enemy";
     const d = document.querySelector(".blured");
     d.style.top = "0";
