@@ -61,6 +61,13 @@ let destroyedshipsComp = [
   { damage: 0 },
   { damage: 0 },
 ];
+let destroyedshipsUser = [
+  { damage: 0, changed: 0 },
+  { damage: 0, changed: 0 },
+  { damage: 0, changed: 0 },
+  { damage: 0, changed: 0 },
+  { damage: 0, changed: 0 },
+];
 let user_Coords = [];
 let user_DupCoords = [];
 for (let i = 0; i < 10; i++) {
@@ -114,7 +121,6 @@ function shipSelector(i) {
   curr.style.backgroundColor = "#4287f5";
 }
 function deletefunc() {
-  console.log("deleted");
   grids.innerHTML = "";
   Placedships = [];
   selectedship = null;
@@ -487,8 +493,6 @@ document.querySelector(".play").addEventListener("click", (event) => {
     return;
   }
   gamestarted++;
-  console.log("started");
-  console.log("work");
   rightdoor.style.right = "0";
   leftdoor.style.left = "0";
   leftdoor.style.borderRight = "30px solid #fff";
@@ -514,7 +518,6 @@ function changeimg() {
 }
 
 function doors() {
-  console.log("doors");
   setTimeout(() => {
     leftdoor.style.borderRight = "30px solid #333";
     rightdoor.style.borderLeft = "30px solid #333";
@@ -540,7 +543,6 @@ function battlebegins() {
 }
 
 function generateBattlefeild() {
-  console.log("working");
   const parent = document.querySelectorAll(".feild");
   const friendly = document.querySelector(".friendly");
   const enemy = document.querySelector(".enemy");
@@ -563,13 +565,24 @@ function generateBattlefeild() {
 
       feildItem.addEventListener("mouseover", handleEnemyhover);
       feildItem.addEventListener("click", handleEnemyclick);
-
       feildItem.className = "enemy-item";
       enemy.appendChild(feildItem);
     }
   }
 }
-
+function updatemsg(text, div) {
+  typingSpeed = 45;
+  let i = 0;
+  div.innerHTML = "";
+  const interval = setInterval(() => {
+    div.textContent += text[i];
+    i++;
+    if (i === text.length) {
+      clearInterval(interval);
+    }
+  }, typingSpeed);
+}
+let msgtyped;
 function handleEnemyhover(event) {
   if (control != "user") {
     return;
@@ -587,6 +600,9 @@ function handleEnemyclick(event) {
   if (control != "user") {
     return;
   }
+  let first = document.querySelector(".firstcmd");
+  let second = document.querySelector(".secondcmd");
+  control = "comp";
   let { row, col } = event.target.dataset;
   row = parseInt(row);
   col = parseInt(col);
@@ -597,43 +613,73 @@ function handleEnemyclick(event) {
   const e = `.enemy-item[data-row="${row}"][data-col="${col}"]`;
   let ele = document.querySelector(e);
   if (ele.classList.contains("destroyed")) {
+    control = "user";
     return;
   }
+  ele.style.backgroundColor = "#006400";
   ele.classList.add("destroyed");
-  let isrep = false;
-  for (let i = 0; i < 20; i++) {
-    if (computerPlacements[i][0] == row && computerPlacements[i][1] == col) {
-      isrep = true;
-      if (i < 2) {
-        destroyedshipsComp[0].damage++;
-      } else if (i < 5) {
-        destroyedshipsComp[1].damage++;
-      } else if (i < 9) {
-        destroyedshipsComp[2].damage++;
-      } else if (i < 14) {
-        destroyedshipsComp[3].damage++;
-      } else {
-        destroyedshipsComp[4].damage++;
+  if (!msgtyped) {
+    const text = "You fire a shot into enemy waters ....";
+    first.innerHTML = "";
+    second.innerHTML = "";
+    updatemsg(text, first);
+    msgtyped = true;
+  }
+  let tex = "";
+  setTimeout(() => {
+    let isrep = false;
+    ele.style.backgroundColor = "";
+    for (let i = 0; i < 20; i++) {
+      if (computerPlacements[i][0] == row && computerPlacements[i][1] == col) {
+        isrep = true;
+        if (i < 2) {
+          destroyedshipsComp[0].damage++;
+        } else if (i < 5) {
+          destroyedshipsComp[1].damage++;
+        } else if (i < 9) {
+          destroyedshipsComp[2].damage++;
+        } else if (i < 14) {
+          destroyedshipsComp[3].damage++;
+        } else {
+          destroyedshipsComp[4].damage++;
+        }
       }
     }
-  }
-  if (isrep) {
-    const dot = document.createElement("div");
-    dot.className = "dot";
-    dot.style.backgroundColor = "red";
-    ele.append(dot);
-  } else {
-    const dot = document.createElement("div");
-    dot.className = "dot";
-    dot.style.backgroundColor = "#fff";
-    ele.append(dot);
-  }
-  checkdestroyed(destroyedshipsComp);
-  setTimeout(() => {
-    control = "comp";
-    console.log("computer Attack");
-    computerAttack();
-  }, 1000);
+    if (isrep) {
+      const dot = document.createElement("div");
+      dot.className = "dot";
+      dot.style.backgroundColor = "red";
+      tex = "It's a Hit";
+      ele.append(dot);
+    } else {
+      const dot = document.createElement("div");
+      dot.className = "dot";
+      dot.style.backgroundColor = "#fff";
+      tex = "It's a Miss";
+      ele.append(dot);
+    }
+    updatemsg(tex, second);
+    checkdestroyed(destroyedshipsComp);
+    if (checkwin()) {
+      checkwin();
+      const div = document.querySelector(".victory");
+      const windata = `Game over! ${won} won!!`;
+      const data = document.querySelector(".wintxt");
+      data.innerHTML = windata;
+      div.classList.add("vic");
+      return;
+    }
+    setTimeout(() => {
+      first.innerHTML = "";
+      second.innerHTML = "";
+      let t = "Your Opponent is Aiming..";
+      updatemsg(t, first);
+    }, 700);
+    setTimeout(() => {
+      msgtypedComp = false;
+      computerAttack();
+    }, 2000);
+  }, 2000);
 }
 function checkdestroyed(ships) {
   if (ships[0].damage == 2) {
@@ -716,7 +762,6 @@ function ArrangeComputer() {
       computerships[i].Ship_axis = "Y";
     }
   }
-  console.log(computerships);
   // arrangeBattlefeild(computerships, "enemy-item");
 }
 
@@ -769,7 +814,7 @@ function arrangeBattlefeild(shipsArr, childname) {
     }
   });
 }
-
+const nam = document.querySelector(".name").value;
 generateBattlefeild();
 document.querySelector(".highlight-btn").addEventListener("click", () => {
   if (Placedships.length == 5) {
@@ -778,6 +823,21 @@ document.querySelector(".highlight-btn").addEventListener("click", () => {
       setTimeout(() => {
         arrangeBattlefeild(Placedships, "feild-item");
         ArrangeComputer();
+        user_placements();
+        setTimeout(() => {
+          typingSpeed = 20;
+          let i = 0;
+          const text = `Awaiting orders, Admiral ${nam}`;
+          const div = document.querySelector(".firstcmd");
+          div.innerHTML = "";
+          const interval = setInterval(() => {
+            div.textContent += text[i];
+            i++;
+            if (i === text.length) {
+              clearInterval(interval);
+            }
+          }, typingSpeed);
+        }, 100);
       }, 1000);
     }, 4000);
   }
@@ -924,51 +984,78 @@ function generateparis() {
 let prev;
 let Pattack_coords;
 let memory = [];
+let msgtypedComp = false;
 function computerAttack() {
-  if (control == "comp") {
-    let coord = user_Coords[getRandomNumber()];
-    console.log(memory);
-    let row = coord[0];
-    let col = coord[1];
-    const e = `.feild-item[data-row="${row}"][data-col="${col}"]`;
-    let ele = document.querySelector(e);
-    if (ele.classList.contains("destroyed")) {
-      console.log("repedted");
-      return;
-    }
-    ele.classList.add("destroyed");
-    const img = ele.querySelector("img");
-    if (img != null) {
-      img.style.backgroundColor = "red";
-      memory.push([row, col]);
-      Pattack_coords = [row, col];
-      // #8b0000
-    } else {
-      const dot = document.createElement("div");
-      dot.className = "dot";
-      dot.style.backgroundColor = "#fff";
-      ele.append(dot);
-    }
-    memory.forEach((element) => {
-      let x = element[0];
-      let y = element[1];
-      if (checkdestruction(x, y)) {
-        console.log("removed");
-        let idx = memory.findIndex((arr) => arr[0] === x && arr[1] === y);
-        memory.splice(idx, 1);
-      }
-    });
+  let first = document.querySelector(".firstcmd");
+  let second = document.querySelector(".secondcmd");
 
-    //  let temp = user_Coords.indexOf([row, col]);
-    temp = user_Coords.findIndex((c) => c[0] === row && c[1] === col);
-
-    if (destroyed_coords != null) {
-      destroyed_coords.push(temp);
-    } else {
-      destroyed_coords[0] = 100;
-    }
-    control = "user";
+  if (!msgtypedComp) {
+    const text1 = "The enemy fires a shot into your waters ......";
+    first.innerHTML = "";
+    second.innerHTML = "";
+    updatemsg(text1, first);
+    msgtyped = true;
   }
+  let coord = user_Coords[getRandomNumber()];
+  let row = coord[0];
+  let col = coord[1];
+  const e = `.feild-item[data-row="${row}"][data-col="${col}"]`;
+  let ele = document.querySelector(e);
+  if (ele.classList.contains("destroyed")) {
+    console.log("repedted");
+    return;
+  }
+  ele.style.backgroundColor = "#006400";
+  setTimeout(() => {
+    if (control == "comp") {
+      let t = "";
+      ele.style.backgroundColor = "";
+      ele.classList.add("destroyed");
+      const img = ele.querySelector("img");
+      if (img != null) {
+        img.style.backgroundColor = "red";
+        memory.push([row, col]);
+        Pattack_coords = [row, col];
+        updateUserDestroyed(row, col);
+        t = "It's a Hit";
+        user_destroyed();
+      } else {
+        const dot = document.createElement("div");
+        dot.className = "dot";
+        dot.style.backgroundColor = "#fff";
+        t = "It's a miss";
+        ele.append(dot);
+      }
+      memory.forEach((element) => {
+        let x = element[0];
+        let y = element[1];
+        if (checkdestruction(x, y)) {
+          let idx = memory.findIndex((arr) => arr[0] === x && arr[1] === y);
+          memory.splice(idx, 1);
+        }
+      });
+      temp = user_Coords.findIndex((c) => c[0] === row && c[1] === col);
+      if (destroyed_coords != null) {
+        destroyed_coords.push(temp);
+      } else {
+        destroyed_coords[0] = 100;
+      }
+      updatemsg(t, second);
+      if (checkwin()) {
+        checkwin();
+        const div = document.querySelector(".victory");
+        const windata = `Game over! ${won} won!!`;
+        const data = document.querySelector(".wintxt");
+        data.innerHTML = windata;
+        div.classList.add("vic");
+        return;
+      }
+      setTimeout(() => {
+        msgtyped = false;
+        control = "user";
+      }, 1100);
+    }
+  }, 2000);
 }
 let destroyed_coords = [];
 function randomGen() {
@@ -984,9 +1071,8 @@ function randomGen() {
   return index;
 }
 function checkdestruction(row, col) {
-  //left
   let count = 0;
-  if (row - 1 > 0) {
+  if (row - 1 >= 0) {
     const e = `.feild-item[data-row="${row - 1}"][data-col="${col}"]`;
     let element = document.querySelector(e);
     if (element.classList.contains("destroyed")) {
@@ -1004,7 +1090,7 @@ function checkdestruction(row, col) {
   } else {
     count++;
   }
-  if (col - 1 > 0) {
+  if (col - 1 >= 0) {
     const e = `.feild-item[data-row="${row}"][data-col="${col - 1}"]`;
     let element = document.querySelector(e);
     if (element.classList.contains("destroyed")) {
@@ -1030,6 +1116,14 @@ function checkdestruction(row, col) {
 function getRandomNumber() {
   let idx;
   let randomNumber;
+  memory.forEach((element) => {
+    let x = element[0];
+    let y = element[1];
+    if (checkdestruction(x, y)) {
+      let idx = memory.findIndex((arr) => arr[0] === x && arr[1] === y);
+      memory.splice(idx, 1);
+    }
+  });
   if (memory.length > 0) {
     cords = memory[memory.length - 1];
     idx = intelligence(cords);
@@ -1043,7 +1137,6 @@ function intelligence(Pattack_coords) {
   let x = ele[0];
   let y = ele[1];
   let a, b;
-  console.log("intelligece", x, y);
   if (isval_attack(x - 1, y)) {
     a = x - 1;
     b = y;
@@ -1063,7 +1156,6 @@ function intelligence(Pattack_coords) {
     (coord) => coord[0] === a && coord[1] === b
   );
   user_DupCoords.splice(temp, 1);
-  console.log(a, b);
   const index = user_Coords.findIndex(
     (coord) => coord[0] === a && coord[1] === b
   );
@@ -1085,3 +1177,111 @@ function isval_attack(x, y) {
   }
   return false;
 }
+let user_Placed = [];
+function user_placements() {
+  Placedships.forEach((ship) => {
+    let dir = ship.Ship_axis;
+    let i = ship.coords[0][0];
+    let j = ship.coords[0][1];
+    let endX = ship.coords[1][0];
+    let endY = ship.coords[1][1];
+
+    if (dir == "X") {
+      for (let k = j; k <= endY; k++) {
+        user_Placed.push([i, k]);
+      }
+    } else {
+      for (let k = i; k <= endX; k++) {
+        user_Placed.push([k, j]);
+      }
+    }
+  });
+}
+function updateUserDestroyed(row, col) {
+  for (let i = 0; i < 20; i++) {
+    if (user_Placed[i][0] == row && user_Placed[i][1] == col) {
+      isrep = true;
+      if (i < 2) {
+        destroyedshipsUser[0].damage++;
+      } else if (i < 5) {
+        destroyedshipsUser[1].damage++;
+      } else if (i < 9) {
+        destroyedshipsUser[2].damage++;
+      } else if (i < 14) {
+        destroyedshipsUser[3].damage++;
+      } else {
+        destroyedshipsUser[4].damage++;
+      }
+    }
+  }
+}
+function user_destroyed() {
+  if (destroyedshipsUser[0].damage == 2) {
+    if (destroyedshipsUser[0].changed == 0) {
+      changeColUser(0, 2);
+      destroyedshipsUser[0].changed = 1;
+    }
+  }
+  if (destroyedshipsUser[1].damage == 3) {
+    if (destroyedshipsUser[1].changed == 0) {
+      changeColUser(2, 5);
+      destroyedshipsUser[1].changed = 1;
+    }
+  }
+  if (destroyedshipsUser[2].damage == 4) {
+    if (destroyedshipsUser[2].changed == 0) {
+      changeColUser(5, 9);
+      destroyedshipsUser[2].changed = 1;
+    }
+  }
+  if (destroyedshipsUser[3].damage == 5) {
+    if (destroyedshipsUser[3].changed == 0) {
+      changeColUser(9, 14);
+      destroyedshipsUser[3].changed = 1;
+    }
+  }
+  if (destroyedshipsUser[4].damage == 6) {
+    if (destroyedshipsUser[4].changed == 0) {
+      changeColUser(14, 20);
+      destroyedshipsUser[4].changed = 1;
+    }
+  }
+}
+function changeColUser(start, end) {
+  for (let i = start; i < end; i++) {
+    let row = user_Placed[i][0];
+    let col = user_Placed[i][1];
+    const e = `.feild-item[data-row="${row}"][data-col="${col}"]`;
+    let ele = document.querySelector(e);
+    let img = ele.querySelector("img");
+    img.style.backgroundColor = "#8b0000";
+  }
+}
+let won = "";
+function checkwin() {
+  let ca = destroyedshipsComp[0].damage;
+  let cb = destroyedshipsComp[1].damage;
+  let cc = destroyedshipsComp[2].damage;
+  let cd = destroyedshipsComp[3].damage;
+  let ce = destroyedshipsComp[4].damage;
+  let ua = destroyedshipsComp[0].damage;
+  let ub = destroyedshipsComp[1].damage;
+  let uc = destroyedshipsComp[2].damage;
+  let ud = destroyedshipsComp[3].damage;
+  let ue = destroyedshipsComp[4].damage;
+  if (ca == 2 && cb == 3 && cc == 4 && cd == 5 && ce == 6) {
+    won = `${nam}`;
+    const d = document.querySelector(".blured");
+    d.style.top = "0";
+    return true;
+  }
+  if (ua == 2 && ub == 3 && uc == 4 && ud == 5 && ue == 6) {
+    won = "Enemy";
+    const d = document.querySelector(".blured");
+    d.style.top = "0";
+    return true;
+  }
+}
+document.querySelector(".playagain").addEventListener("click", () => {
+  window.location.reload(false);
+});

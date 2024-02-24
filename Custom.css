@@ -182,3 +182,37 @@ footer:hover{
   justify-content: center;
   background: linear-gradient(90deg, rgb(55, 55, 55) 0%, rgb(41, 41, 41) 29%, rgb(41, 41, 41) 76%, rgb(56, 56, 56) 100%);
 }
+.victory{
+  height: 20%;
+  width: 100%;
+  position: fixed;
+  z-index: 100;
+  background-color: #dddddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  font-size: 8vh;
+  transition: bottom 1s ease-in-out;
+  flex-direction: column;
+  font-family: 'Anton', sans-serif;
+}
+.victory button{
+  font-size: 4vh;
+  width: 18%;
+  border: 3px solid #888;
+  box-sizing: border-box;
+  border-radius: 5%;
+  cursor: pointer;
+}
+.vic{
+  top: 0; margin-top: 15%
+}
+.blured{
+  position: fixed;
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
+  z-index: 6;
+}
