@@ -76,9 +76,16 @@ for (let i = 0; i < 10; i++) {
     user_DupCoords.push([i, j]);
   }
 }
-
+const eborder = document.querySelector(".eborder");
 document.querySelector(".start").addEventListener("click", () => {
-  document.querySelector(".strategy-panel").classList.add("open");
+  nam = document.querySelector(".name").value.trim();
+  if (nam !== "") {
+    document.querySelector(".pname").innerText = nam;
+    document.querySelector(".name").style.border = "";
+    document.querySelector(".strategy-panel").classList.add("open");
+  } else {
+    document.querySelector(".name").style.border = "2px solid red";
+  }
 });
 
 del.addEventListener("click", () => deletefunc());
@@ -814,7 +821,7 @@ function arrangeBattlefeild(shipsArr, childname) {
     }
   });
 }
-const nam = document.querySelector(".name").value;
+let nam = "";
 generateBattlefeild();
 document.querySelector(".highlight-btn").addEventListener("click", () => {
   if (Placedships.length == 5) {
@@ -1269,13 +1276,15 @@ function checkwin() {
   let uc = destroyedshipsComp[2].damage;
   let ud = destroyedshipsComp[3].damage;
   let ue = destroyedshipsComp[4].damage;
-  if (ca == 2 && cb == 3 && cc == 4 && cd == 5 && ce == 6) {
+  if (ca == 2) {
+    // && cb == 3 && cc == 4 && cd == 5 && ce == 6
     won = `${nam}`;
     const d = document.querySelector(".blured");
     d.style.top = "0";
     return true;
   }
-  if (ua == 2 && ub == 3 && uc == 4 && ud == 5 && ue == 6) {
+  if (ua == 2) {
+    // && ub == 3 && uc == 4 && ud == 5 && ue == 6
     won = "Enemy";
     const d = document.querySelector(".blured");
     d.style.top = "0";
